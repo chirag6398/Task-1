@@ -44,7 +44,7 @@ export default function Filters() {
     //         timerId = setTimeout(() => {
     //             (async () => {
     //                 try {
-    //                     const apiUrl = `http://localhost:5000/projects/?input=${inputData}`
+    //                     const apiUrl = `/projects/?input=${inputData}`
     //                     const response = await axios.get(apiUrl);
     //                     if (response) {
     //                         console.log(response);

@@ -12,7 +12,7 @@ export default function Project() {
     useEffect(() => {
         const fetchProjects = async () => {
             try {
-                const apiUrl = "http://localhost:5000/projects"
+                const apiUrl = "/projects"
                 const response = await axios.get(apiUrl);
                 if (response) {
                     dispatch(setProjects(response.data))
