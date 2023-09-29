@@ -1,4 +1,4 @@
-import { dotenv } from "./lib/index.js";
+import { dotenv } from "./src/lib/index.js";
 import { startApp, useGraceFullShutdown  } from './app.js';
 
 dotenv.config({ path: "./.env" });
