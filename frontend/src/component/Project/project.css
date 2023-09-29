@@ -1,0 +1,16 @@
+
+.project_container{
+    display: flex;
+    flex-wrap: wrap;
+    align-items:flex-start;
+    justify-content: center;
+    
+}
+.project_container > * {
+    margin: 10px 10px;
+    cursor: pointer;
+}
+.ant-modal-content{
+    border-radius: 0px !important;
+    height: 100vh;
+}
