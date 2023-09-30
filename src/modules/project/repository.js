@@ -8,7 +8,7 @@ export const projectRepository = () => {
 
     const find = async (props) => {
         const { filters = null, projections = null, options = null } = props
-        const res =await Project.find(filters, projections, options);
+        const res =await Project.find(filters, projections, options).maxTimeMS(1000);
         return res;
     };
 

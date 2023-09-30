@@ -1,37 +1,21 @@
-import React, { useState, useEffect } from 'react'
-import { Input, Modal, Button, Select } from "antd";
+import React, { useState, useEffect } from 'react';
+import { Input, Modal, Button, Select, Tooltip } from "antd";
 import { FilterOutlined } from "@ant-design/icons";
-import axios from "axios"
-import "./filter.css"
+import "./filter.css";
 import { useSelector, useDispatch } from 'react-redux';
 import { filtered, setProcessing } from "../../store/projectSlice.js";
+import { apiService } from '../../services/api.js';
+import { projectConstants as pc } from './constant';
 const { Search } = Input
 export default function Filters() {
     const [isProcessing, setIsProcesssing] = useState(false);
     const [isFilter, setIsFilter] = useState(false);
     const state = useSelector((state) => state.project)
     const dispatch = useDispatch();
+
     const handleQuery = (e) => {
         setInputData(e.target.value);
-        //******************* */ Uncomment if we need to search from frontend ****************************
-        // if (e.target.value.length > 2) {
-        //     setIsProcesssing(true);
-        //     searchProjects(e.target.value);
-        //     setIsProcesssing(false);
-        // } else {
-        //     dispatch(filtered([]))
-        //     setIsProcesssing(false);
-        // }
-
     }
-    // const searchProjects = (query) => {
-    //     const results = state.projects.filter((item) =>
-    //         Object.values(item).some((value) =>
-    //             value.toString().toLowerCase().includes(query.toLowerCase())
-    //         )
-    //     );
-    //     dispatch(filtered(results))
-    // }
 
     const [query, setQuery] = useState({});
     const setFilterValueHandler = async (value, key) => {
@@ -42,8 +26,7 @@ export default function Filters() {
         setIsFilter(false);
         dispatch(setProcessing(true));
         try {
-            const url = `/projects/filter`;
-            const res = await axios.get(url, { params: query });
+            const res = await apiService.getFilteredProjects({ url: pc.GET_FILTER_PROJECT_URL, params: query })
             if (res.data) {
                 dispatch(filtered(res.data));
                 dispatch(setProcessing(false));
@@ -64,8 +47,9 @@ export default function Filters() {
             timerId = setTimeout(() => {
                 (async () => {
                     try {
-                        const apiUrl = `/projects/?input=${inputData}`
-                        const response = await axios.get(apiUrl);
+                        const apiUrl = `${pc.GET_PROJECTS_URL
+                            }/?input=${inputData}`
+                        const response = await apiService.getProjects({ url: apiUrl })
                         if (response.data) {
                             dispatch(filtered(response.data))
                             setIsProcesssing(false)
@@ -90,7 +74,7 @@ export default function Filters() {
         <>
             <div className='filter_container'>
                 <div style={{ width: "400px" }}>
-                    <Search placeholder="Search" onChange={(e) => { handleQuery(e) }} loading={isProcessing} />
+                    <Search style={{ width: "400px" }} placeholder="Search" onChange={(e) => { handleQuery(e) }} loading={isProcessing} />
                 </div>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
                     <h3 style={{ color: "white" }}>Count: <span style={{ opacity: "0.5" }}>{state.filteredResult ? `${state.filteredResult.length}` : `${state.projects.length}`}</span></h3>
@@ -98,7 +82,9 @@ export default function Filters() {
             </div>
             <div>
                 <div onClick={() => { setIsFilter(true) }} className='filter_icon'>
-                    <FilterOutlined />
+                    <Tooltip placement="leftTop" title="Filter" >
+                        <FilterOutlined />
+                    </Tooltip>
                 </div>
             </div>
             <Modal
@@ -106,7 +92,7 @@ export default function Filters() {
                 style={{ position: "absolute", top: "0px", right: "0px", height: "100vh", width: "480px" }}
                 open={isFilter}
                 footer={[<Button
-                    style={{ display: "flex", minWidth: "105px", justifyContent: "center" }}
+                    style={{ display: "flex", minWidth: "105px", justifyContent: "center", backgroundColor: "black" }}
                     type="primary"
                     onClick={searchHandler}
                 >
@@ -134,7 +120,6 @@ export default function Filters() {
                                 options={state.fs}
                             />
                         </div>
-
                     </div>
                     <div style={{ padding: "17px 0px 17px" }}>
                         <div>
@@ -155,7 +140,6 @@ export default function Filters() {
                                 options={state.bs}
                             />
                         </div>
-
                     </div>
                     <div style={{ padding: "17px 0px 17px" }}>
                         <div>
@@ -176,7 +160,6 @@ export default function Filters() {
                                 options={state.databases}
                             />
                         </div>
-
                     </div>
                     <div style={{ padding: "17px 0px 17px" }}>
                         <div>
@@ -197,7 +180,6 @@ export default function Filters() {
                                 options={state.infrastructure}
                             />
                         </div>
-
                     </div>
                     <div style={{ padding: "17px 0px 17px" }}>
                         <div>
@@ -218,11 +200,8 @@ export default function Filters() {
                                 options={state.technologies}
                             />
                         </div>
-
                     </div>
-
                 </div>
-
             </Modal>
         </>
     )

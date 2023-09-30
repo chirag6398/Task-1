@@ -1,64 +1,69 @@
-import React, { useEffect, useState } from 'react'
-import { Card, Modal } from "antd"
-import Filters from './Filters'
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import { Card, Modal } from "antd";
+import Filters from './Filters';
 import ReactLoading from "react-loading";
-import "./project.css"
-import { setProjects, setVariables, setProcessing } from '../../store/projectSlice.js'
-import { useDispatch, useSelector } from 'react-redux'
+import "./project.css";
+import { setProjects, setVariables, setProcessing } from '../../store/projectSlice.js';
+import { useDispatch, useSelector } from 'react-redux';
+import { apiService } from '../../services/api.js';
+import { projectConstants as pc } from './constant';
 export default function Project() {
     const [selectedProject, setSelectedProject] = useState("");
     const dispatch = useDispatch();
-    const state = useSelector((state) => state.project)
+    const state = useSelector((state) => state.project);
+
+    const setProjectTags = (projects) => {
+        const tags = {
+            fs: [],
+            bs: [],
+            technologies: [],
+            infrastructure: [],
+            databases: [],
+        };
+
+        const uniqueValues = {
+            fs: new Set(),
+            bs: new Set(),
+            technologies: new Set(),
+            infrastructure: new Set(),
+            databases: new Set(),
+        };
+
+        projects.forEach((val) => {
+            val.fs.forEach((el) => {
+                uniqueValues.fs.add(el);
+            });
+            val.bs.forEach((el) => {
+                uniqueValues.bs.add(el);
+            });
+            val.databases.forEach((el) => {
+                uniqueValues.databases.add(el);
+            });
+            val.technologies.forEach((el) => {
+                uniqueValues.technologies.add(el);
+            });
+            val.infrastructure.forEach((el) => {
+                uniqueValues.infrastructure.add(el);
+            });
+        });
+        tags.fs = [...uniqueValues.fs].map((el) => ({ value: el, label: el }));
+        tags.bs = [...uniqueValues.bs].map((el) => ({ value: el, label: el }));
+        tags.databases = [...uniqueValues.databases].map((el) => ({ value: el, label: el }));
+        tags.technologies = [...uniqueValues.technologies].map((el) => ({ value: el, label: el }));
+        tags.infrastructure = [...uniqueValues.infrastructure].map((el) => ({ value: el, label: el }));
+        dispatch(setVariables(tags));
+    }
+
     useEffect(() => {
         const fetchProjects = async () => {
             try {
-                const apiUrl = "/projects"
-                const response = await axios.get(apiUrl);
-                if (response) {
+                const response = await apiService.getProjects({ url: pc.GET_PROJECTS_URL });
+                if (response.status != 500) {
                     dispatch(setProjects(response.data));
-                    const meta = {
-                        fs: [],
-                        bs: [],
-                        technologies: [],
-                        infrastructure: [],
-                        databases: [],
-                    };
-
-                    const uniqueValues = {
-                        fs: new Set(),
-                        bs: new Set(),
-                        technologies: new Set(),
-                        infrastructure: new Set(),
-                        databases: new Set(),
-                    };
-
-                    response.data.forEach((val) => {
-                        val.fs.forEach((el) => {
-                            uniqueValues.fs.add(el);
-                        });
-                        val.bs.forEach((el) => {
-                            uniqueValues.bs.add(el);
-                        });
-                        val.databases.forEach((el) => {
-                            uniqueValues.databases.add(el);
-                        });
-                        val.technologies.forEach((el) => {
-                            uniqueValues.technologies.add(el);
-                        });
-                        val.infrastructure.forEach((el) => {
-                            uniqueValues.infrastructure.add(el);
-                        });
-                    });
-
-
-                    meta.fs = [...uniqueValues.fs].map((el) => ({ value: el, label: el }));
-                    meta.bs = [...uniqueValues.bs].map((el) => ({ value: el, label: el }));
-                    meta.databases = [...uniqueValues.databases].map((el) => ({ value: el, label: el }));
-                    meta.technologies = [...uniqueValues.technologies].map((el) => ({ value: el, label: el }));
-                    meta.infrastructure = [...uniqueValues.infrastructure].map((el) => ({ value: el, label: el }));
-                    dispatch(setVariables(meta));
+                    setProjectTags(response.data);
                     dispatch(setProcessing(false));
+                } else {
+                    throw new Error("Please try later")
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -82,7 +87,7 @@ export default function Project() {
                 <div style={{ display: "flex", position: "absolute", top: "0px", left: "0px", justifyContent: "center", alignItems: "center", height: "100vh", width: "100vw" }}>
                     <ReactLoading
                         type={"bars"}
-                        color={"#03fc4e"}
+                        color={"black"}
                         height={100}
                         width={100}
                     />

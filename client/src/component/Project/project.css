@@ -18,9 +18,8 @@
 .ant-card{
     box-shadow:  19px 19px 38px hsl(0deg 9.23% 90.58%),
     0px 0px 10px #ededed;
-    min-height: 457px;
+    min-height: 480px;
 }
 p{
     font-size: 14px;
-    font-family:monospace;
 }

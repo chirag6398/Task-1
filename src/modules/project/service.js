@@ -39,7 +39,7 @@ export const projectService = (() => {
             }
             const result = await projectRepository().find({ filters });
 
-            return res.send(result);
+            return res.status(200).send(result);
         } catch (err) {
             console.log(err);
             return res.status(500).send(err)
