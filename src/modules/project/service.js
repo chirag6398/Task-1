@@ -4,16 +4,47 @@ export const projectService = (() => {
     const getAll = async (req, res) => {
         try {
             const q = req.query.input || "";
+            const updatedQuery = q.split(/[,\s]+/);
             let filters = {}
             if (q.length) {
                 filters = {
                     $or: [
                         { title: { $regex: `\\b${q}\\b`, $options: 'i' } },
-                        { technologies: { $in: [new RegExp(q, 'i')] } },
-                        { fs: { $in: [new RegExp(q, 'i')] } },
-                        { bs: { $in: [new RegExp(q, 'i')] } },
-                        { databases: { $in: [new RegExp(q, 'i')] } },
-                        { infrastructure: { $in: [new RegExp(q, 'i')] } },
+                        {
+                            technologies: {
+                                $elemMatch: {
+                                    $in: updatedQuery.map((term) => new RegExp(term, 'i')), // 'i' flag makes it case-insensitive
+                                }
+                            }
+                        },
+                        {
+                            fs: {
+                                $elemMatch: {
+                                    $in: updatedQuery.map((term) => new RegExp(term, 'i')), // 'i' flag makes it case-insensitive
+                                }
+                            }
+                        },
+                        {
+                            bs: {
+                                $elemMatch: {
+                                    $in: updatedQuery.map((term) => new RegExp(term, 'i')), // 'i' flag makes it case-insensitive
+                                }
+                            }
+                        },
+                        {
+                            databases: {
+                                $elemMatch: {
+                                    $in: updatedQuery.map((term) => new RegExp(term, 'i')), // 'i' flag makes it case-insensitive
+                                }
+                            }
+                        },
+                        {
+                            infrastructure: {
+                                $elemMatch: {
+                                    $in: updatedQuery.map((term) => new RegExp(term, 'i')), // 'i' flag makes it case-insensitive
+                                }
+                            }
+                        },
                         { availability: { $regex: q, $options: 'i' } },
                     ],
                 }
