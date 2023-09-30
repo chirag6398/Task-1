@@ -4,13 +4,23 @@
     flex-wrap: wrap;
     align-items:flex-start;
     justify-content: center;
+    margin-top: 30px;
     
 }
 .project_container > * {
-    margin: 10px 10px;
+    margin: 15px 20px;
     cursor: pointer;
 }
 .ant-modal-content{
     border-radius: 0px !important;
     height: 100vh;
+}
+.ant-card{
+    box-shadow:  19px 19px 38px hsl(0deg 9.23% 90.58%),
+    0px 0px 10px #ededed;
+    min-height: 457px;
+}
+p{
+    font-size: 14px;
+    font-family:monospace;
 }

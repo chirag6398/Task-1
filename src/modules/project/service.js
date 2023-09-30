@@ -23,10 +23,29 @@ export const projectService = (() => {
             return res.send(result);
         } catch (err) {
             console.log(err);
-            return res.send(err)
+            return res.status(500).send(err)
         }
-
     }
-    return { getAll }
+
+    const filter = async (req, res) => {
+        try {
+            const q = req.query;
+            const filters = {
+                ...(q.tg && { technologies: { $in: q.tg } }),
+                ...(q.fs && { fs: { $in: q.fs } }),
+                ...(q.bs && { bs: { $in: q.bs } }),
+                ...(q.db && { databases: { $in: q.db } }),
+                ...(q.infrastructure && { infrastructure: { $in: q.infrastructure } })
+            }
+            const result = await projectRepository().find({ filters });
+
+            return res.send(result);
+        } catch (err) {
+            console.log(err);
+            return res.status(500).send(err)
+        }
+    }
+
+    return { getAll, filter }
 })()
 
