@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Modal } from "antd";
+import { Card, Modal, Empty } from "antd";
 import Filters from './Filters';
 import ReactLoading from "react-loading";
 import "./project.css";
@@ -94,7 +94,7 @@ export default function Project() {
                 </div>
                 : <div className='project_container'>
                     {
-                        state.filteredResult === null ? state.projects.map((project) => {
+                        state.filteredResult === null ? state.projects.length ? state.projects.map((project) => {
                             return <Card
 
                                 onClick={() => {
@@ -144,7 +144,7 @@ export default function Project() {
                                     <p>{project.availability.length ? project.availability : "-"}</p>
                                 </div>
                             </Card>
-                        }) : state.filteredResult?.map((project) => {
+                        }): <Empty/> : state.filteredResult.length ? state.filteredResult?.map((project) => {
                             return <Card
 
                                 onClick={() => {
@@ -194,7 +194,7 @@ export default function Project() {
                                     <p>{project.availability.length ? project.availability : "-"}</p>
                                 </div>
                             </Card>
-                        })
+                        }):<Empty/>
                     }
                 </div>
         }
